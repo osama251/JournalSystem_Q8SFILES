@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-backend
+  labels:
+    app: image-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-backend
+  template:
+    metadata:
+      labels:
+        app: image-backend
+    spec:
+      containers:
+        - name: journalsystem-image
+          image: osama251/journalsystem-image:latest
+          imagePullPolicy: Always        # so new pushes are used
+          ports:
+            - containerPort: 3000        # Express listens on 3000
+          env:
+            - name: DB_HOST
+              value: image-db
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: journalimage_user
+            - name: DB_PASSWORD
+              value: password123
+            - name: DB_NAME
+              value: journalimage
+          volumeMounts:
+            - name: upload-storage
+              mountPath: /app/uploads
+      volumes:
+        - name: upload-storage
+          persistentVolumeClaim:
+            claimName: image-uploads-pvc
+      restartPolicy: Always

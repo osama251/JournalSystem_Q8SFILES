@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-db
+  labels:
+    app: image-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-db
+  template:
+    metadata:
+      labels:
+        app: image-db
+    spec:
+      containers:
+        - name: image-db
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: 12345AbcD
+            - name: MYSQL_DATABASE
+              value: journalimage
+            - name: MYSQL_USER
+              value: journalimage_user
+            - name: MYSQL_PASSWORD
+              value: password123
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: image-mysql-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: image-mysql-data
+          persistentVolumeClaim:
+            claimName: image-mysql-pvc

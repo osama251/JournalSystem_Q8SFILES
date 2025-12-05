@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.37.0 (HEAD)
+  labels:
+    io.kompose.service: message-backend
+  name: message-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: message-backend
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml
+        kompose.version: 1.37.0 (HEAD)
+      labels:
+        io.kompose.service: message-backend
+    spec:
+      containers:
+        - env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password123
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://message-db:3306/journalmessage?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+            - name: SPRING_DATASOURCE_USERNAME
+              value: journalmessage_user
+          image: osama251/journalmessage-backend:latest
+          imagePullPolicy: IfNotPresent
+          name: journalmessage-backend
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+      restartPolicy: Always

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-backend
+  labels:
+    app: search-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search-backend
+  template:
+    metadata:
+      labels:
+        app: search-backend
+    spec:
+      containers:
+        - name: journalsearch-backend
+          image: osama251/journalsearch-backend:v2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8083
+              protocol: TCP
+      restartPolicy: Always
+    

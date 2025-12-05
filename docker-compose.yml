@@ -1,0 +1,101 @@
+services:
+  auth-db:
+    image: mysql:8.0
+    container_name: journalauth-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345AbcD
+      MYSQL_DATABASE: journalauth
+      MYSQL_USER: journalauth_user
+      MYSQL_PASSWORD: password123
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p12345AbcD || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  auth-backend:
+    build: ./JournalSystem_Auth
+    container_name: journalauth-backend
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-db:3306/journalauth?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: journalauth_user
+      SPRING_DATASOURCE_PASSWORD: password123
+
+  message-db:
+    image: mysql:8.0
+    container_name: journalmessage-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345AbcD
+      MYSQL_DATABASE: journalmessage
+      MYSQL_USER: journalmessage_user
+      MYSQL_PASSWORD: password123
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p12345AbcD || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_message_data:/var/lib/mysql
+
+  message-backend:
+    build: ./JournalSystem_Message
+    container_name: journalmessage-backend
+    depends_on:
+      message-db:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://message-db:3306/journalmessage?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: journalmessage_user
+      SPRING_DATASOURCE_PASSWORD: password123
+
+  logs-db:
+    image: mysql:8.0
+    container_name: journallogs-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345AbcD
+      MYSQL_DATABASE: journallogs
+      MYSQL_USER: journallogs_user
+      MYSQL_PASSWORD: password123
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p12345AbcD || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql_logs_data:/var/lib/mysql
+
+  logs-backend:
+    build: ./JournalSystem_Logs
+    container_name: journallogs-backend
+    depends_on:
+      logs-db:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://logs-db:3306/journallogs?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: journallogs_user
+      SPRING_DATASOURCE_PASSWORD: password123
+
+volumes:
+  mysql_data:
+  mysql_message_data:
+  mysql_logs_data:
