@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: osama251/journalsystem-user:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8087
+          env:
+            - name: SERVER_PORT
+              value: "8087"
+            - name: KEYCLOAK_AUTH_SERVER_URL
+              value: "http://keycloak:8080"
+            - name: KEYCLOAK_REALM
+              value: "journal"
+            - name: KEYCLOAK_CLIENT_ID
+              value: "user-mgmt-service"
+            - name: KEYCLOAK_CLIENT_SECRET
+              value: "1NyBVwEzvHTkoUOZdTDRnPafXo5VSINH"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  type: NodePort
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 8087
+      targetPort: 8087
+      nodePort: 30087

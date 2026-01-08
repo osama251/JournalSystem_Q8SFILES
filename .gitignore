@@ -4,3 +4,10 @@ JournalSystem_Search/
 JournalSystem_Message/
 JournalSystem_Image/
 journalsystem_frontend/
+JournalSystem_KeyCloak/
+JournalSystem_User/
+auth-backend-deployment.yaml
+auth-backend-service.yaml
+auth-db-deployment.yaml
+auth-db-service.yaml
+mysql-data-persistentvolumeclaim.yaml

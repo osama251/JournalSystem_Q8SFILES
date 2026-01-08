@@ -29,7 +29,7 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: journalmessage_user
           image: osama251/journalmessage-backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: journalmessage-backend
           ports:
             - containerPort: 8081
